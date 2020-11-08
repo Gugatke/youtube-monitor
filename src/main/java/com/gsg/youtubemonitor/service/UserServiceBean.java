@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import sun.swing.StringUIClientPropertyKey;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -54,6 +56,11 @@ public class UserServiceBean implements UserService {
             }
             userDto.setId(0);
         }
+        if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
+            String errorMessage = String.format("Bad request to create user[%s] user already exists with this username", userDto);
+            log.error(errorMessage);
+            throw new YMException(YMExceptionReason.BAD_REQUEST, errorMessage);
+        }
         User user = UserHelper.fromDto(userDto);
         user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
         user.setNextJobRunTime(LocalDateTime.now().plusMinutes(user.getJobRunMinute()));
@@ -63,16 +70,33 @@ public class UserServiceBean implements UserService {
 
     @Override
     @Transactional
-    public void updateUserCountry(int userId, String countryCode) throws YMException {
-        log.debug("Updating user[{}] countryCode[{}]", userId, countryCode);
+    public void updateUser(int userId, String countryCode, Integer jobRunMinute) throws YMException {
+        log.debug("Updating user[{}] countryCode[{}] jobRunMinute[{}]", userId, countryCode, jobRunMinute);
+        if (countryCode == null && jobRunMinute == null) {
+            throw new YMException(YMExceptionReason.BAD_REQUEST, "either countryCode or jobRunMinute should be present for user update");
+        }
+        if (countryCode != null && countryCode.length() != 2) {
+            throw new YMException(YMExceptionReason.BAD_REQUEST, "country code length should be 2");
+        }
+        if (jobRunMinute != null && (jobRunMinute <= 0 || jobRunMinute > 60)) {
+            throw new YMException(YMExceptionReason.BAD_REQUEST, "jobRunMinute should be in range 1-60 inclusive");
+        }
+
         Optional<User> userOpt = userRepository.findById(userId);
         if (!userOpt.isPresent()) {
             String errorMessage = String.format("No user[%d] found to update countryCode[%s]", userId, countryCode);
             log.error(errorMessage);
             throw new YMException(YMExceptionReason.BAD_REQUEST, errorMessage);
         }
+
         User user = userOpt.get();
-        user.setCountryCode(countryCode);
+        if (countryCode != null) {
+            user.setCountryCode(countryCode);
+        }
+        if (jobRunMinute != null) {
+            user.setJobRunMinute(jobRunMinute);
+            user.updateNextJobRunTime();
+        }
         userRepository.save(user);
     }
 

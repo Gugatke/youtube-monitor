@@ -7,6 +7,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
+import com.gsg.youtubemonitor.model.CountryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,16 +35,21 @@ public class YoutubeIntegration {
         this.APPLICATION_NAME = APPLICATION_NAME;
     }
 
-    public YoutubeData getUserYoutubeData(String countryCode) {
+    public CountryData getUserYoutubeData(String countryCode) {
         VideoListResponse videoList = getVideoList(countryCode);
         String mostPopularVideoId = getMostPopularVideoId(videoList);
         String mostPopularVideoThumbnailUrl = getVideoThumbnail(videoList);
         String mostPopularCommentOnTheVideo = getMostPopularCommentIdForVideo(mostPopularVideoId);
         String mostPopularVideoUrl = YOUTUBE_VIDEO_URL_PREFIX + mostPopularVideoId;
         String mostPopularCommentOnTheVideoUrl = mostPopularVideoUrl + "&lc=" + mostPopularCommentOnTheVideo;
-        YoutubeData youtubeData = new YoutubeData(mostPopularVideoUrl, mostPopularVideoThumbnailUrl, mostPopularCommentOnTheVideoUrl);
-        log.info(youtubeData.toString());
-        return youtubeData;
+        CountryData countryData = CountryData.builder()
+                                             .countryCode(countryCode)
+                                             .mostPopularVideoUrl(mostPopularVideoUrl)
+                                             .mostPopularVideoThumbnailUrl(mostPopularVideoThumbnailUrl)
+                                             .mostPopularCommentUrlOnTheVideo(mostPopularCommentOnTheVideoUrl)
+                                             .build();
+        log.info("Obtained CountryData[{}] from youtube", countryData);
+        return countryData;
     }
 
     private String getMostPopularVideoId(VideoListResponse videoList) {

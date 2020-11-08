@@ -65,14 +65,14 @@ class UserServiceTest {
     @Test
     void testCountryCodeIsUpdatedCorrectly() throws YMException {
         String countryCode = "US";
-        userService.updateUserCountry(1, countryCode);
+        userService.updateUser(1, countryCode, null);
         UserDto userDto = userService.getUserDto(1);
         assertEquals(countryCode, userDto.getCountryCode());
     }
 
     @Test
     void testCountryCodeUpdateFailsOnWrongId() {
-        assertThrows(YMException.class, () -> userService.updateUserCountry(2, "US"));
+        assertThrows(YMException.class, () -> userService.updateUser(2, "US", null));
     }
 
     private UserDto createTestUser() {

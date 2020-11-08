@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService {
 
     UserDto createUser(UserDto userDto) throws YMException;
 
-    void updateUserCountry(int id, String country) throws YMException;
+    void updateUser(int id, String country, Integer jobRunMinute) throws YMException;
 
     List<Integer> getUserIdsToRunJobs();
 

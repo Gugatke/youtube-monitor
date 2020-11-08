@@ -2,9 +2,9 @@ package com.gsg.youtubemonitor.controller;
 
 import com.gsg.youtubemonitor.common.YMException;
 import com.gsg.youtubemonitor.common.YMExceptionReason;
-import com.gsg.youtubemonitor.dto.AuthRequest;
-import com.gsg.youtubemonitor.dto.AuthResponse;
-import com.gsg.youtubemonitor.dto.RefreshRequest;
+import com.gsg.youtubemonitor.dto.auth.AuthRequest;
+import com.gsg.youtubemonitor.dto.auth.AuthResponse;
+import com.gsg.youtubemonitor.dto.auth.RefreshRequest;
 import com.gsg.youtubemonitor.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class AuthenticateController {
         this.jwtUtils = jwtUtils;
     }
 
-    @RequestMapping(value = "/session/authenticate", method = RequestMethod.POST)
+    @RequestMapping(value = "/not-secured/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> authenticate(@RequestBody AuthRequest authRequest) throws YMException {
         authenticateCredentials(authRequest);
 
@@ -45,7 +45,7 @@ public class AuthenticateController {
         return ResponseEntity.ok().body(response);
     }
 
-    @RequestMapping(value = "/session/refresh", method = RequestMethod.POST)
+    @RequestMapping(value = "/not-secured/refresh", method = RequestMethod.POST)
     public ResponseEntity<?> refresh(@RequestBody RefreshRequest refreshRequest) throws YMException {
         String jwtToken = jwtUtils.getTokenFromRefreshToken(refreshRequest.getRefreshToken());
 

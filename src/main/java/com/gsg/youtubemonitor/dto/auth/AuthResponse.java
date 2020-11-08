@@ -1,4 +1,4 @@
-package com.gsg.youtubemonitor.dto;
+package com.gsg.youtubemonitor.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

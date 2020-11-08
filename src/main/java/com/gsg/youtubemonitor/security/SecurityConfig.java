@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -18,11 +19,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtFilter jwtFilter;
 
+    private final CorsFilter corsFilter;
+
     @Autowired
-    public SecurityConfig(UserService userService, JwtFilter jwtFilter) {
+    public SecurityConfig(UserService userService, JwtFilter jwtFilter, CorsFilter corsFilter) {
         super();
         this.userService = userService;
         this.jwtFilter = jwtFilter;
+        this.corsFilter = corsFilter;
     }
 
     @Override
@@ -34,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/session/*")
+                .antMatchers("/not-secured/*")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -42,7 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(corsFilter, ChannelProcessingFilter.class);
     }
 
     @Bean
