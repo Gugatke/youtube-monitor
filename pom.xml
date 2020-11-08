@@ -16,6 +16,8 @@
 
 	<properties>
 		<java.version>8</java.version>
+		<google.api.version>1.23.0</google.api.version>
+		<google.data.api.version>v3-rev222-1.25.0</google.data.api.version>
 	</properties>
 
 	<dependencies>
@@ -48,6 +50,22 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>${google.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-jetty</artifactId>
+			<version>${google.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-youtube</artifactId>
+			<version>${google.data.api.version}</version>
+		</dependency>
+
 
 
 		<dependency>
