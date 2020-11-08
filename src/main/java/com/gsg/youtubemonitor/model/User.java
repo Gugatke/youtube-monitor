@@ -79,4 +79,11 @@ public class User {
     public void setNextJobRunTime(LocalDateTime nextJobRunTime) {
         this.nextJobRunTime = nextJobRunTime;
     }
+
+    public void updateNextJobRunTime() {
+        int deltaSeconds = 5;
+        this.nextJobRunTime = LocalDateTime.now()
+                                           .plusMinutes(jobRunMinute)
+                                           .minusSeconds(deltaSeconds);
+    }
 }

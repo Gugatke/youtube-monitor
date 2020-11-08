@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,7 +35,7 @@ public class UserServiceBean implements UserService {
     }
 
     @Override
-    public UserDto getUser(int id) {
+    public UserDto getUserDto(int id) {
         return userRepository.findById(id)
                 .map(UserHelper::toDto)
                 .orElse(null);
@@ -88,4 +89,14 @@ public class UserServiceBean implements UserService {
                 .build();
     }
 
+    @Override
+    public List<Integer> getUserIdsToRunJobs() {
+        return userRepository.findUserIdsByNextJobRunTimeBefore(LocalDateTime.now());
+    }
+
+    @Override
+    public User getUser(int id) {
+        return userRepository.findById(id)
+                             .orElse(null);
+    }
 }

@@ -6,9 +6,17 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+
+@EnableAsync
+@EnableScheduling
+@EnableJpaRepositories
 @SpringBootApplication
 public class YoutubeMonitorApplication {
 
@@ -32,8 +40,10 @@ public class YoutubeMonitorApplication {
                             .username("admin")
                             .passwordHash("$2y$10$sh0U3ORaOSYBKNxRtu6R5eqHMnJKnmsadbL9m/6q2Z7PN64iQjIBy")
                             .countryCode("GE")
-                            .jobRunMinute(0)
+                            .jobRunMinute(5)
+                            .nextJobRunTime(LocalDateTime.now().plusSeconds(55))
                             .build();
+
             userRepository.save(user);
         };
     }

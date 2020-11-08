@@ -21,7 +21,7 @@ class UserServiceTest {
         UserDto userDto = createTestUser();
 
         UserDto createdUserDto = userService.createUser(userDto);
-        UserDto userFromDb = userService.getUser(createdUserDto.getId());
+        UserDto userFromDb = userService.getUserDto(createdUserDto.getId());
         assertNotNull(userFromDb);
         assertEquals(userDto.getUsername(), userFromDb.getUsername());
     }
@@ -66,7 +66,7 @@ class UserServiceTest {
     void testCountryCodeIsUpdatedCorrectly() throws YMException {
         String countryCode = "US";
         userService.updateUserCountry(1, countryCode);
-        UserDto userDto = userService.getUser(1);
+        UserDto userDto = userService.getUserDto(1);
         assertEquals(countryCode, userDto.getCountryCode());
     }
 
