@@ -27,13 +27,13 @@ public class UserController {
         this.countryDataService = countryDataService;
     }
 
-    @RequestMapping(value = "/not-secured/users", method = RequestMethod.POST)
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) throws YMException {
         UserDto createdUser = userService.createUser(userDto);
         return ResponseEntity.ok(createdUser);
     }
 
-    @RequestMapping(value = "/users/{id}")
+    @RequestMapping(value = "/secured/users/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable("id") Integer userId) throws YMException {
         if (userId == null) {
             throw new YMException(YMExceptionReason.BAD_REQUEST, "UserId should not be null");
@@ -46,7 +46,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/secured/users/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@PathVariable("id") Integer id,
                                         @RequestParam("countryCode") String countryCode,
                                         @RequestParam("jobRunMinute") Integer jobRunMinute) throws YMException {
@@ -57,7 +57,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "/users/{id}/countryData")
+    @RequestMapping(value = "/secured/users/{id}/countryData")
     public ResponseEntity<CountryDataDto> getUserCountryData(@PathVariable("id") Integer userId) throws YMException {
         CountryDataDto countryDataDto = countryDataService.getCountryDataDto(userId);
         return ResponseEntity.ok(countryDataDto);

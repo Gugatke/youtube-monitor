@@ -29,7 +29,7 @@ const Main = (props) => {
     return <div>
         {render}
         <hr/>
-        <p>Update user data</p>
+        <h3>Edit user preferences</h3>
         <form onSubmit={(e) => updateUser(e)}>
             <label htmlFor="country">Country</label>
             <input type="text" name="country" pattern="[a-zA-Z]{2}" placeholder={props.countryCode} required

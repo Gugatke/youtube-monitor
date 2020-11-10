@@ -31,10 +31,13 @@ public class JobProcessor {
 
     @Lazy
     @Resource(name = "JobProcessor")
-    private JobProcessor SELF;
+    protected JobProcessor SELF;
 
     @Autowired
-    public JobProcessor(UserService userService, CountryDataService countryDataService, YoutubeIntegration youtubeIntegration, EventWebSocketHandler eventWebSocketHandler) {
+    public JobProcessor(UserService userService,
+                        CountryDataService countryDataService,
+                        YoutubeIntegration youtubeIntegration,
+                        EventWebSocketHandler eventWebSocketHandler) {
         this.userService = userService;
         this.countryDataService = countryDataService;
         this.youtubeIntegration = youtubeIntegration;

@@ -28,7 +28,7 @@ const Register = (props) => {
 
     return (
         <div>
-            <p>Please <Link to='/'>Log</Link> In or Register</p>
+            <h3>Please <Link to='/'>Log</Link> In or Register</h3>
             <form onSubmit={(e) => createUser(e)}>
                 <label htmlFor="username">Username</label>
                 <input name="username" placeholder="Username" type="text" required ref={usernameRef}/> <br/>

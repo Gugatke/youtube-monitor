@@ -13,7 +13,7 @@ const Login = (props) => {
 
     return (
         <div>
-            <p>Please Log In or <Link to='/register'>Register</Link></p>
+            <h3>Please Log In or <Link to='/register'>Register</Link></h3>
             <form onSubmit={(e) => login(e)}>
                 <label htmlFor="username">Username</label>
                 <input name="username" placeholder="username" type="text" required ref={usernameRef}/> <br/>

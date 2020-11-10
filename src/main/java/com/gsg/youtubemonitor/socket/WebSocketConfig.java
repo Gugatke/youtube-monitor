@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(handler, "/not-secured/update-events").setAllowedOrigins("*");
+        registry.addHandler(handler, "/update-events").setAllowedOrigins("*");
     }
 
     @Bean

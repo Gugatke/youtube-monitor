@@ -38,14 +38,14 @@ public class AuthenticateController {
         this.jwtUtils = jwtUtils;
     }
 
-    @RequestMapping(value = "/not-secured/authenticate", method = RequestMethod.POST)
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> authenticate(@RequestBody AuthRequest authRequest) throws YMException {
         authenticateCredentials(authRequest);
 
         return createAuthResponse(authRequest.getUsername());
     }
 
-    @RequestMapping(value = "/not-secured/refresh", method = RequestMethod.POST)
+    @RequestMapping(value = "/refresh", method = RequestMethod.POST)
     public ResponseEntity<?> refresh(@RequestBody RefreshRequest refreshRequest) throws YMException {
         String username = jwtUtils.getUsernameFromRefreshToken(refreshRequest.getRefresh());
 

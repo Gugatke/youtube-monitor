@@ -61,7 +61,7 @@ public class UserServiceBean implements UserService {
         }
         User user = UserHelper.fromDto(userDto);
         user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
-        user.setNextJobRunTime(LocalDateTime.now().plusMinutes(user.getJobRunMinute()));
+        user.setNextJobRunTime(LocalDateTime.now());
         user = userRepository.save(user);
         return UserHelper.toDto(user);
     }

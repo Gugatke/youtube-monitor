@@ -20,7 +20,7 @@ const title = {
 
 const button = {
     marginRight: '20px',
-    fontSize: '20px'
+    cursor: 'pointer'
 }
 
 const Layout = (props) => {
@@ -28,7 +28,7 @@ const Layout = (props) => {
         <div>
             <div style={header}>
                 <h2 style={title}>YoutubeMonitor</h2>
-                {props.logged && <button style={button} onClick={props.logout}>Logout</button>}
+                {props.logged && <h2 style={button} onClick={props.logout}>Logout</h2>}
             </div>
             <div style={container}>
                 {props.children}

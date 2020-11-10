@@ -41,7 +41,7 @@ const refreshAccessToken = async () => {
     if (auth === null || auth.refresh === undefined) {
         return false
     }
-    auth = await axios.post("/not-secured/refresh", {refresh: auth.refresh})
+    auth = await axios.post("/refresh", {refresh: auth.refresh})
         .then(response => response.data)
         .catch(error => {
             console.log("Refresh failed", error)

@@ -27,7 +27,7 @@ class YoutubeMonitor extends Component {
 
     login = (username, password) => {
         const data = {username, password}
-        axios.post('/not-secured/authenticate', data)
+        axios.post('/authenticate', data)
             .then(response => {
                 localStorage.setItem('ym-auth', JSON.stringify(response.data))
                 this.setAuthState(response.data)
@@ -40,7 +40,7 @@ class YoutubeMonitor extends Component {
     setAuthState(auth) {
         this.setState({
             auth,
-            socket: new WebSocket(`ws://localhost:8080/not-secured/update-events?id=${auth.user.id}`)
+            socket: new WebSocket(`ws://localhost:8080/update-events?id=${auth.user.id}`)
         })
     }
 
@@ -54,7 +54,7 @@ class YoutubeMonitor extends Component {
     }
 
     createUser = (user) => {
-        axios.post('/not-secured/users', user)
+        axios.post('/users', user)
             .then(response => {
                 this.login(user.username, user.password)
             }).catch(reason => console.log(reason))
@@ -75,7 +75,7 @@ class YoutubeMonitor extends Component {
 
     updateData() {
         const id = this.state.auth.user.id;
-        axios.get(`/users/${id}/countryData`)
+        axios.get(`/secured/users/${id}/countryData`)
             .then(response => {
                 console.log(response)
                 this.setState({userData: response.data})
@@ -83,7 +83,7 @@ class YoutubeMonitor extends Component {
     }
 
     updateUser = (countryCode, jobRunMinute) => {
-        axios.put(`/users/${this.state.auth.user.id}`, null, {
+        axios.put(`/secured/users/${this.state.auth.user.id}`, null, {
             params: {
                 countryCode,
                 jobRunMinute
