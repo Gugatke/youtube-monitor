@@ -5,7 +5,9 @@ import com.gsg.youtubemonitor.common.YMExceptionReason;
 import com.gsg.youtubemonitor.dto.auth.AuthRequest;
 import com.gsg.youtubemonitor.dto.auth.AuthResponse;
 import com.gsg.youtubemonitor.dto.auth.RefreshRequest;
+import com.gsg.youtubemonitor.dto.user.UserDto;
 import com.gsg.youtubemonitor.security.JwtUtils;
+import com.gsg.youtubemonitor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,11 +25,16 @@ public class AuthenticateController {
 
     private final AuthenticationManager authenticationManager;
 
+    private final UserService userService;
+
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public AuthenticateController(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+    public AuthenticateController(AuthenticationManager authenticationManager,
+                                  UserService userService,
+                                  JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
+        this.userService = userService;
         this.jwtUtils = jwtUtils;
     }
 
@@ -35,24 +42,26 @@ public class AuthenticateController {
     public ResponseEntity<?> authenticate(@RequestBody AuthRequest authRequest) throws YMException {
         authenticateCredentials(authRequest);
 
-        String jwtToken = jwtUtils.generateJwt(authRequest.getUsername());
-        String refreshToken = jwtUtils.generateRefreshJwt(authRequest.getUsername());
-
-        AuthResponse response = AuthResponse.builder()
-                                            .jwtToken(jwtToken)
-                                            .refreshToken(refreshToken)
-                                            .build();
-        return ResponseEntity.ok().body(response);
+        return createAuthResponse(authRequest.getUsername());
     }
 
     @RequestMapping(value = "/not-secured/refresh", method = RequestMethod.POST)
     public ResponseEntity<?> refresh(@RequestBody RefreshRequest refreshRequest) throws YMException {
-        String jwtToken = jwtUtils.getTokenFromRefreshToken(refreshRequest.getRefreshToken());
+        String username = jwtUtils.getUsernameFromRefreshToken(refreshRequest.getRefresh());
 
+        return createAuthResponse(username);
+    }
+
+    private ResponseEntity<AuthResponse> createAuthResponse(String username) {
+        String jwtToken = jwtUtils.generateJwt(username);
+        String refreshToken = jwtUtils.generateRefreshJwt(username);
+
+        UserDto user = userService.getUserDto(username);
         AuthResponse response = AuthResponse.builder()
-                                            .jwtToken(jwtToken)
-                                            .build();
-
+                .user(user)
+                .access(jwtToken)
+                .refresh(refreshToken)
+                .build();
         return ResponseEntity.ok().body(response);
     }
 

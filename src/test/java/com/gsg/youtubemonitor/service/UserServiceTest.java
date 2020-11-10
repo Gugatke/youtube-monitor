@@ -18,17 +18,17 @@ class UserServiceTest {
 
     @Test
     void testUserIsCreated() throws YMException {
-        UserDto userDto = createTestUser();
+        UserDto userDto = createTestUser("1");
 
         UserDto createdUserDto = userService.createUser(userDto);
-        UserDto userFromDb = userService.getUserDto(createdUserDto.getId());
+        UserDto userFromDb = userService.getUserDto(createdUserDto.getUsername());
         assertNotNull(userFromDb);
         assertEquals(userDto.getUsername(), userFromDb.getUsername());
     }
 
     @Test
     void testUserIsCreatedWithValidId() throws YMException {
-        UserDto userDto = createTestUser();
+        UserDto userDto = createTestUser("2 ");
         userDto.setId(402);
 
         UserDto createdUser = userService.createUser(userDto);
@@ -39,7 +39,7 @@ class UserServiceTest {
 
     @Test
     void testUserIsNotCreatedForDuplicateId() {
-        UserDto userDto = createTestUser();
+        UserDto userDto = createTestUser("3");
         userDto.setId(1); // set id which we know is occupied
 
         assertThrows(YMException.class, () -> userService.createUser(userDto));
@@ -66,7 +66,7 @@ class UserServiceTest {
     void testCountryCodeIsUpdatedCorrectly() throws YMException {
         String countryCode = "US";
         userService.updateUser(1, countryCode, null);
-        UserDto userDto = userService.getUserDto(1);
+        UserDto userDto = userService.getUserDto("admin");
         assertEquals(countryCode, userDto.getCountryCode());
     }
 
@@ -75,9 +75,9 @@ class UserServiceTest {
         assertThrows(YMException.class, () -> userService.updateUser(2, "US", null));
     }
 
-    private UserDto createTestUser() {
+    private UserDto createTestUser(String username) {
         return UserDto.builder()
-                .username("testUser")
+                .username(username)
                 .password("testPassword")
                 .countryCode("GE")
                 .jobRunMinute(1)

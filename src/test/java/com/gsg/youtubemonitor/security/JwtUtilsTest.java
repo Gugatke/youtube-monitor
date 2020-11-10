@@ -63,9 +63,8 @@ class JwtUtilsTest {
     void testRefreshTokenCanGenerateValidToken() throws YMException {
         String username = "user";
         String refreshToken = jwtUtils.generateRefreshJwt(username);
-        String jwtToken = jwtUtils.getTokenFromRefreshToken(refreshToken);
-        boolean validate = jwtUtils.validate(jwtToken, username);
-        assertTrue(validate);
+        String usernameFromRefreshToken = jwtUtils.getUsernameFromRefreshToken(refreshToken);
+        assertEquals(username, usernameFromRefreshToken);
     }
 
     @Test
@@ -82,6 +81,6 @@ class JwtUtilsTest {
         String refreshToken = jwtUtils.generateRefreshJwt(username);
 
         Mockito.when(jwtUtils.getCurrentDate()).thenCallRealMethod();
-        assertThrows(YMException.class, () -> jwtUtils.getTokenFromRefreshToken(refreshToken));
+        assertThrows(YMException.class, () -> jwtUtils.getUsernameFromRefreshToken(refreshToken));
     }
 }

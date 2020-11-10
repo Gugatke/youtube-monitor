@@ -13,8 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import sun.swing.StringUIClientPropertyKey;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -37,8 +35,8 @@ public class UserServiceBean implements UserService {
     }
 
     @Override
-    public UserDto getUserDto(int id) {
-        return userRepository.findById(id)
+    public UserDto getUserDto(String username) {
+        return userRepository.findByUsername(username)
                 .map(UserHelper::toDto)
                 .orElse(null);
     }

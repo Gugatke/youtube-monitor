@@ -81,7 +81,7 @@ public class User {
     }
 
     public void updateNextJobRunTime() {
-        int deltaSeconds = 5;
+        int deltaSeconds = 20;
         this.nextJobRunTime = LocalDateTime.now()
                                            .plusMinutes(jobRunMinute)
                                            .minusSeconds(deltaSeconds);

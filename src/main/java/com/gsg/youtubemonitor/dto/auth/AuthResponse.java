@@ -1,5 +1,6 @@
 package com.gsg.youtubemonitor.dto.auth;
 
+import com.gsg.youtubemonitor.dto.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthResponse {
 
-    private String jwtToken;
+    private UserDto user;
 
-    private String refreshToken;
+    private String access;
+
+    private String refresh;
 }

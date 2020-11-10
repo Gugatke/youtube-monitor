@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    UserDto getUserDto(int id);
+    UserDto getUserDto(String username);
 
     UserDto createUser(UserDto userDto) throws YMException;
 

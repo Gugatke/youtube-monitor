@@ -5,8 +5,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.CommentThreadListResponse;
-import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.api.services.youtube.model.*;
 import com.gsg.youtubemonitor.model.CountryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +14,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 @Component
 public class YoutubeIntegration {
 
-    private static final String  YOUTUBE_VIDEO_URL_PREFIX = "https://www.youtube.com/watch?v=";
+    private static final String YOUTUBE_VIDEO_URL_PREFIX = "https://www.youtube.com/watch?v=";
 
     private static final Logger log = LoggerFactory.getLogger(YoutubeIntegration.class);
 
@@ -39,15 +39,18 @@ public class YoutubeIntegration {
         VideoListResponse videoList = getVideoList(countryCode);
         String mostPopularVideoId = getMostPopularVideoId(videoList);
         String mostPopularVideoThumbnailUrl = getVideoThumbnail(videoList);
-        String mostPopularCommentOnTheVideo = getMostPopularCommentIdForVideo(mostPopularVideoId);
         String mostPopularVideoUrl = YOUTUBE_VIDEO_URL_PREFIX + mostPopularVideoId;
+        String mostPopularCommentOnTheVideo = getMostPopularCommentIdForVideo(mostPopularVideoId);
         String mostPopularCommentOnTheVideoUrl = mostPopularVideoUrl + "&lc=" + mostPopularCommentOnTheVideo;
+        if (mostPopularCommentOnTheVideo == null) {
+            mostPopularCommentOnTheVideoUrl = null;
+        }
         CountryData countryData = CountryData.builder()
-                                             .countryCode(countryCode)
-                                             .mostPopularVideoUrl(mostPopularVideoUrl)
-                                             .mostPopularVideoThumbnailUrl(mostPopularVideoThumbnailUrl)
-                                             .mostPopularCommentUrlOnTheVideo(mostPopularCommentOnTheVideoUrl)
-                                             .build();
+                .countryCode(countryCode)
+                .mostPopularVideoUrl(mostPopularVideoUrl)
+                .mostPopularVideoThumbnailUrl(mostPopularVideoThumbnailUrl)
+                .mostPopularCommentUrlOnTheVideo(mostPopularCommentOnTheVideoUrl)
+                .build();
         log.info("Obtained CountryData[{}] from youtube", countryData);
         return countryData;
     }
@@ -63,22 +66,28 @@ public class YoutubeIntegration {
     }
 
     private String getVideoThumbnail(VideoListResponse videoList) {
-        try {
-            return videoList.getItems().get(0).getSnippet().getThumbnails().getMaxres().getUrl();
-        } catch (Exception e) {
-            log.error("Error occurred parsing thumbnail url from videoList[{}]", videoList);
-            return null;
+        List<Video> items = videoList.getItems();
+        if (items != null && items.size() > 0) {
+            VideoSnippet snippet = items.get(0).getSnippet();
+            if (snippet != null && snippet.getThumbnails() != null) {
+                if (snippet.getThumbnails().getMaxres() != null) {
+                    return snippet.getThumbnails().getMaxres().getUrl();
+                } else {
+                    Thumbnail defaultThumbnail = snippet.getThumbnails().getDefault();
+                    return defaultThumbnail != null ? defaultThumbnail.getUrl() : null;
+                }
+            }
         }
+        return null;
     }
 
     private VideoListResponse getVideoList(String countryCode) {
         try {
             YouTube youtubeService = getService();
-            YouTube.Videos.List request = youtubeService.videos()
+            return youtubeService.videos()
                     .list("snippet,contentDetails,statistics")
-                    .setKey(API_KEY);
-
-            return request.setChart("mostPopular")
+                    .setKey(API_KEY)
+                    .setChart("mostPopular")
                     .setRegionCode(countryCode)
                     .execute();
         } catch (Exception e) {
@@ -91,16 +100,21 @@ public class YoutubeIntegration {
     private String getMostPopularCommentIdForVideo(String videoId) {
         try {
             YouTube service = getService();
-            YouTube.CommentThreads.List request = service.commentThreads()
-                    .list("snippet,replies");
-            CommentThreadListResponse response = request.setKey(API_KEY)
-                                                        .setOrder("relevance")
-                                                        .setVideoId(videoId)
-                                                        .execute();
-            return response.getItems().get(0).getId();
-        } catch (Exception e) {
+            CommentThreadListResponse response = service.commentThreads()
+                    .list("snippet,replies")
+                    .setKey(API_KEY)
+                    .setOrder("relevance")
+                    .setVideoId(videoId)
+                    .execute();
+            List<CommentThread> items = response.getItems();
+            if (items == null || items.size() == 0) {
+                log.info("No comment found for video[{}]", videoId);
+                return null;
+            }
+            return items.get(0).getId();
+        } catch (GeneralSecurityException | IOException e) {
             log.info("Error occurred getting most popular comment for video[{}]", videoId, e);
-            throw new IllegalStateException("Error occurred getting most popular comment for video:" + videoId);
+            return null;
         }
     }
 

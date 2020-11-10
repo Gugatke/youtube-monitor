@@ -11,9 +11,9 @@ public class CountryDataHelper {
 
         return CountryDataDto.builder()
                              .countryCode(countryData.getCountryCode())
-                             .mostPopularVideoUrl(countryData.getMostPopularVideoUrl())
-                             .mostPopularVideoThumbnailUrl(countryData.getMostPopularVideoThumbnailUrl())
-                             .mostPopularCommentUrlOnTheVideo(countryData.getMostPopularCommentUrlOnTheVideo())
+                             .videoUrl(countryData.getMostPopularVideoUrl())
+                             .thumbnailUrl(countryData.getMostPopularVideoThumbnailUrl())
+                             .commentUrl(countryData.getMostPopularCommentUrlOnTheVideo())
                              .build();
     }
 }

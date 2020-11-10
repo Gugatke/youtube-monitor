@@ -13,9 +13,9 @@ public class CountryDataDto {
 
     private String countryCode;
 
-    private String mostPopularVideoUrl;
+    private String videoUrl;
 
-    private String mostPopularVideoThumbnailUrl;
+    private String thumbnailUrl;
 
-    private String mostPopularCommentUrlOnTheVideo;
+    private String commentUrl;
 }

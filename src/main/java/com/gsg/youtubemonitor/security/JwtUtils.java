@@ -65,7 +65,7 @@ public class JwtUtils {
         return claims.getSubject();
     }
 
-    public String getTokenFromRefreshToken(String refreshToken) throws YMException {
+    public String getUsernameFromRefreshToken(String refreshToken) throws YMException {
         Claims claims = getClaimsFromToken(refreshToken, refreshKey);
         boolean invalidRefreshToken = claims == null
                 || claims.getSubject().split(":").length != 2
@@ -73,8 +73,7 @@ public class JwtUtils {
         if (invalidRefreshToken) {
             throw new YMException(YMExceptionReason.BAD_REQUEST, "Invalid refresh token");
         }
-        String username = claims.getSubject().split(":")[0];
-        return generateJwt(username);
+        return claims.getSubject().split(":")[0];
     }
 
     private Claims getClaimsFromToken(String jwtToken, String key) {

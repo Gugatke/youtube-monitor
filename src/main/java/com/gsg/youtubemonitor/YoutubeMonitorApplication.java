@@ -40,7 +40,7 @@ public class YoutubeMonitorApplication {
                             .username("admin")
                             .passwordHash("$2y$10$sh0U3ORaOSYBKNxRtu6R5eqHMnJKnmsadbL9m/6q2Z7PN64iQjIBy")
                             .countryCode("GE")
-                            .jobRunMinute(5)
+                            .jobRunMinute(1)
                             .nextJobRunTime(LocalDateTime.now().plusSeconds(55))
                             .build();
 

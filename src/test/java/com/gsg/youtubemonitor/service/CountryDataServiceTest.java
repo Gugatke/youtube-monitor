@@ -26,6 +26,6 @@ class CountryDataServiceTest {
                                              .build();
         countryDataService.createCountryData(countryData);
         CountryDataDto retrievedCountryData = countryDataService.getCountryDataDto(ownerUserId);
-        assertEquals(countryData.getMostPopularVideoUrl(), retrievedCountryData.getMostPopularVideoUrl());
+        assertEquals(countryData.getMostPopularVideoUrl(), retrievedCountryData.getVideoUrl());
     }
 }
